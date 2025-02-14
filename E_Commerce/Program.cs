@@ -31,7 +31,7 @@ namespace E_Commerce
             }
             catch (Exception ex) {
               var logger =  loggerFactory.CreateLogger<Program>();
-                logger.LogError(ex.Message+ "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+                logger.LogError(ex.Message);
             
             }
 
