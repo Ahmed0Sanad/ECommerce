@@ -1,4 +1,6 @@
 
+using ECommerce.Core.Repository.Contract;
+using ECommerce.Repository;
 using ECommerce.Repository.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +18,7 @@ namespace E_Commerce
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-
+            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             #endregion
 
             var app = builder.Build();
@@ -28,6 +30,7 @@ namespace E_Commerce
             try
             {
                 await dbContext.Database.MigrateAsync();
+                  Seeding.SeedingHelper(dbContext);
             }
             catch (Exception ex) {
               var logger =  loggerFactory.CreateLogger<Program>();
