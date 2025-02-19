@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerce.Core
+namespace ECommerce.Core.Entity
 {
-    public class BaseEntity
+    public class ProductCategory : BaseEntity
     {
-        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using ECommerce.Core;
+﻿using ECommerce.Core.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using ECommerce.Core;
+﻿using ECommerce.Core.Entity;
 using ECommerce.Core.Repository.Contract;
 using ECommerce.Core.Specifications;
 using ECommerce.Repository.Data;

@@ -1,4 +1,5 @@
-﻿using ECommerce.Core.Specifications;
+﻿using ECommerce.Core.Entity;
+using ECommerce.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,5 +1,9 @@
-﻿using ECommerce.Core;
+﻿using AutoMapper;
+using E_Commerce.DTO;
+using ECommerce.Core.Entity;
 using ECommerce.Core.Repository.Contract;
+using ECommerce.Core.Specifications;
+using ECommerce.Core.Specifications.ProductSpecifications;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,26 +14,30 @@ namespace E_Commerce.Controllers
     public class ProductController : ControllerBase
     {
         private readonly IGenericRepository<Product> _productRepo;
+        private readonly IMapper _mapper;
 
-        public ProductController(IGenericRepository<Product> ProductRepo)
+        public ProductController(IGenericRepository<Product> ProductRepo,IMapper mapper)
         {
             _productRepo = ProductRepo;
+            _mapper = mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> Getall() 
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> Getall() 
         {
-            var result =await _productRepo.GetAllAsync();
-            return Ok(result);
+            var spec = new ProductWithBrandAndCategory();
+            var result =await _productRepo.GetAllSpecAsync(spec);
+            return Ok(_mapper.Map< IEnumerable<Product>, IEnumerable<ProductDTO> >(result));
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var product = await _productRepo.GetAsync(id);
+            var spec = new ProductWithBrandAndCategory(id);
+            var product = await _productRepo.GetSpecAsync(id,spec);
             if (product == null)
             {
                 return NotFound();
             }
-            return Ok(product);
+            return Ok(_mapper.Map<Product,ProductDTO>(product));
         }
 
     }
