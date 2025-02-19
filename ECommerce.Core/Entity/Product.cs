@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECommerce.Core
+namespace ECommerce.Core.Entity
 {
-    public class Product:BaseEntity
+    public class Product : BaseEntity
     {
         public string Name { get; set; }
         public string Description { get; set; }

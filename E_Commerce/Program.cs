@@ -1,4 +1,5 @@
 
+using E_Commerce.Helper;
 using ECommerce.Core.Repository.Contract;
 using ECommerce.Repository;
 using ECommerce.Repository.Data;
@@ -19,6 +20,8 @@ namespace E_Commerce
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            //builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfile(builder.Configuration["ApiBaseUrl"])));
             #endregion
 
             var app = builder.Build();
@@ -46,7 +49,7 @@ namespace E_Commerce
             }
 
             app.UseHttpsRedirection();
-
+            app.UseStaticFiles();
             app.UseAuthorization();
 
 
