@@ -1,9 +1,13 @@
 
+using E_Commerce.Errors;
 using E_Commerce.Helper;
+using E_Commerce.Middlewares;
 using ECommerce.Core.Repository.Contract;
 using ECommerce.Repository;
 using ECommerce.Repository.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using E_Commerce.Extentions;
 
 namespace E_Commerce
 {
@@ -18,28 +22,11 @@ namespace E_Commerce
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-            builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            //builder.Services.AddAutoMapper(typeof(MappingProfile));
-            builder.Services.AddAutoMapper(M => M.AddProfile(new MappingProfile(builder.Configuration["ApiBaseUrl"])));
+            builder.Services.AddApplicationServices(builder.Configuration);
             #endregion
 
             var app = builder.Build();
-
-            using var scope = app.Services.CreateScope();
-            var services = scope.ServiceProvider;
-            var dbContext = services.GetRequiredService<AppDbContext>();
-            var loggerFactory = services.GetRequiredService<ILoggerFactory>();
-            try
-            {
-                await dbContext.Database.MigrateAsync();
-                  Seeding.SeedingHelper(dbContext);
-            }
-            catch (Exception ex) {
-              var logger =  loggerFactory.CreateLogger<Program>();
-                logger.LogError(ex.Message);
-            
-            }
+            app.DbPreProcess();
 
             #region MiddelWare
             if (app.Environment.IsDevelopment())
@@ -47,12 +34,10 @@ namespace E_Commerce
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthorization();
-
-
             app.MapControllers();
 
             #endregion
