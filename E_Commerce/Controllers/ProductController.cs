@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using E_Commerce.DTO;
+using E_Commerce.Errors;
 using ECommerce.Core.Entity;
 using ECommerce.Core.Repository.Contract;
 using ECommerce.Core.Specifications;
@@ -33,9 +34,10 @@ namespace E_Commerce.Controllers
         {
             var spec = new ProductWithBrandAndCategory(id);
             var product = await _productRepo.GetSpecAsync(id,spec);
+          
             if (product == null)
             {
-                return NotFound();
+                return NotFound(new ApiResponse(404));
             }
             return Ok(_mapper.Map<Product,ProductDTO>(product));
         }
