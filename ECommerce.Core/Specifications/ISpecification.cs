@@ -11,6 +11,11 @@ namespace ECommerce.Core.Specifications
     public interface ISpecification<T>where T : BaseEntity
     {
         public Expression<Func<T, bool>> criteria { get; set; }
+        public Expression<Func<T, object>> OrderBy { get; set; }
+        public Expression<Func<T, object>> OrderByDesc { get; set; }
         public List<Expression<Func<T, BaseEntity>>> includes { get; set; }
+        public int skip { get; set; }
+        public int take { get; set; }
+        public bool IsPagination { get; set; }
     }
 }

@@ -12,6 +12,11 @@ namespace ECommerce.Core.Specifications
     {
         public Expression<Func<T, bool>> criteria { get; set; }
         public List<Expression<Func<T, BaseEntity>>> includes { get; set; } = new List<Expression<Func<T, BaseEntity>>>();
+        public Expression<Func<T, object>> OrderBy { get; set ; }
+        public Expression<Func<T, object>> OrderByDesc { get; set; }
+        public int skip { get; set; }
+        public int take { get ; set ; }
+        public bool IsPagination { get; set; }
 
         public Specification()
         {
@@ -21,6 +26,12 @@ namespace ECommerce.Core.Specifications
         {
             criteria = cretira;
             
+        }
+        protected void ApplyPagination(int skip,int take) 
+        {
+            IsPagination = true;
+            this.skip = skip;
+            this.take = take;
         }
     }
 }
