@@ -25,6 +25,11 @@ namespace ECommerce.Repository
             
         }
 
+        public Task<int> CountSpecAsync(ISpecification<T> spec)
+        {
+            return BaseQuary(spec).CountAsync();
+        }
+
         public void Delete(T entity)
         {
             _appDbContext.Remove(entity);

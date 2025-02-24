@@ -12,6 +12,7 @@ namespace ECommerce.Core.Repository.Contract
     {
         Task<T>GetSpecAsync(int id ,ISpecification<T> spec);
         Task<IEnumerable<T>> GetAllSpecAsync(ISpecification<T> spec);
+        Task<int> CountSpecAsync(ISpecification<T> spec);
         Task<T> GetAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
         void Add(T entity);
