@@ -6,20 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using E_Commerce.Errors;
 using Microsoft.EntityFrameworkCore;
 using StackExchange.Redis;
+using ECommerce.Repository.Identity;
+using ECommerce.Core.Entity.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace E_Commerce.Extentions
 {
     public static class ApplicationServicesExtentions
     {
-        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration Configuration) 
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration Configuration)
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
-            services.AddSingleton<IConnectionMultiplexer>((ServiceProveder) => {
+            services.AddDbContext<IdentityDataBase>(options => options.UseSqlServer(Configuration.GetConnectionString("Identity")));
+            services.AddSingleton<IConnectionMultiplexer>((ServiceProveder) =>
+            {
                 string connectionString = Configuration.GetConnectionString("redis");
                 return ConnectionMultiplexer.Connect(connectionString);
             });
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            services.AddScoped<IBasketRepository, BasketRepository>();
+            services.AddSingleton<IBasketRepository, BasketRepository>();
             //services.AddAutoMapper(typeof(MappingProfile));
             services.AddAutoMapper(M => M.AddProfile(new MappingProfile(Configuration["ApiBaseUrl"])));
             services.Configure<ApiBehaviorOptions>(options =>
@@ -38,6 +43,8 @@ namespace E_Commerce.Extentions
                     return new BadRequestObjectResult(errorResponse);
                 };
             });
+
+            services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<IdentityDataBase>();
 
             return services;
 
