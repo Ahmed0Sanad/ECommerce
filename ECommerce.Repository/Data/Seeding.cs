@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Repository.Data
 {
-    public class Seeding
+    public static class Seeding
     {
         public static void SeedingHelper( AppDbContext context)
         {

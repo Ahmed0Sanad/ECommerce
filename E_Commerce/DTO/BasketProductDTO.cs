@@ -1,22 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace ECommerce.Core.Entity.rides
+namespace E_Commerce.DTO
 {
-    public class BasketProduct
+    public class BasketProductDTO
     {
+        [Required]
         public int Id { get; set; }
+        [MaxLength(100)]
         public string Name { get; set; }
+        [MaxLength(500)]
         public string Description { get; set; }
+        [Range(1, double.MaxValue)]
         public decimal Price { get; set; }
-        public string PictureUrl { get; set; }
-        public string Category { get; set; }
-        public string Brand { get; set; }
-        public int Quantity { get; set; }
+        [MaxLength(100)]
 
+        public string PictureUrl { get; set; }
+        [MaxLength(100)]
+
+        public string Category { get; set; }
+        [MaxLength(100)]
+
+        public string Brand { get; set; }
+        [Required]
+        [Range(1, int.MaxValue)]
+        public int Quantity { get; set; }
     }
 }
