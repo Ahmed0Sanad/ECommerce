@@ -17,8 +17,4 @@
     <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services.Contract\" />
-  </ItemGroup>
-
 </Project>

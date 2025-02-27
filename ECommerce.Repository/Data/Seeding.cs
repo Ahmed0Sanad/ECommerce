@@ -1,4 +1,5 @@
 ﻿using ECommerce.Core.Entity;
+using ECommerce.Core.Entity.OrderEntitys;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,7 @@ namespace ECommerce.Repository.Data
             seed<ProductBrand>(filePath+ "/brands.json", context);
             seed<ProductCategory>(filePath+ "/categories.json", context);
             seed<Product>(filePath + "/products.json", context);
+            seed<DeliveryMethod>(filePath + "/delivery.json", context); 
 
 
         }

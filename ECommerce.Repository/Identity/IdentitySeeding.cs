@@ -21,10 +21,11 @@ namespace ECommerce.Repository.Identity
                     UserName = "AhmedSanad",
                     Fname = "Ahmed",
                     LName = "Sanad",
-                    PhoneNumber = "01098689817"
+                    PhoneNumber = "01098689817",
+                    
 
                 };
-                await userManager.CreateAsync (user);
+                await userManager.CreateAsync (user, "StrongP@ssw0rd!");
             }
         }
     }
