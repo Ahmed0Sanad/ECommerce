@@ -19,7 +19,7 @@ namespace ECommerce.Repository
             _appDbContext = context;
             
         }
-        public async Task Add(T entity)
+        public async Task AddAsync(T entity)
         {
            await _appDbContext.Set<T>().AddAsync(entity);
             

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ECommerce.Core.Entity.OrderEntitys;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace ECommerce.Core.Services.Contract
 {
     public interface IOrderService
     {
-        public Task CreateOrderAsync(int DeliveryMethodId, int BasketId);
+        public Task<Order?> CreateOrderAsync(string BuyerEmail, int DeliveryMethodId, string BasketId, Address address);
     }
 }

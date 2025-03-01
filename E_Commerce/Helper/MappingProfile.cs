@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using E_Commerce.DTO;
 using ECommerce.Core.Entity;
+using ECommerce.Core.Entity.OrderEntitys;
 using ECommerce.Core.Entity.rides;
 
 namespace E_Commerce.Helper
@@ -13,6 +14,7 @@ namespace E_Commerce.Helper
                 ForMember(d=>d.PictureUrl,o=>o.MapFrom(p=>$"{URL}/{p.PictureUrl}"));
             CreateMap<CustomerBasketDTO, CustomerBasket>();
             CreateMap<BasketProductDTO, BasketProduct>();
+            CreateMap<AddressDto, Address>();
         }
     }
 }

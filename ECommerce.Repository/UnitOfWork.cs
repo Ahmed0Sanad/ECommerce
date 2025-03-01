@@ -3,6 +3,7 @@ using ECommerce.Core.Entity;
 using ECommerce.Core.Repository.Contract;
 using ECommerce.Repository.Data;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,20 +18,20 @@ namespace ECommerce.Repository
         public UnitOfWork(AppDbContext appDbContext)
         {
             this.appDbContext = appDbContext;
-            _repositories = new Dictionary<string, GenericRepository<BaseEntity>>();
+            _repositories = new Hashtable();
         }
-        public Dictionary<string,GenericRepository<BaseEntity>> _repositories { get; set; }
+        public Hashtable _repositories { get; set; }
 
-        public async Task CompleteAsync()
+        public async Task<int> CompleteAsync()
         {
-           await appDbContext.SaveChangesAsync();
+          return  await appDbContext.SaveChangesAsync();
         }
 
        
 
-        public ValueTask DisposeAsync()
+        public async ValueTask DisposeAsync()
         {
-            throw new NotImplementedException();
+            await appDbContext.DisposeAsync();
         }
 
         public IGenericRepository<T> GetRepository<T>() where T : BaseEntity
@@ -38,9 +39,10 @@ namespace ECommerce.Repository
             var Key = typeof(T).Name;
             if (!_repositories.ContainsKey(Key))
             {
-                _repositories[Key] = new GenericRepository<T>(appDbContext) as GenericRepository<BaseEntity>;
+                var repo = new GenericRepository<T>(appDbContext) ;
+                _repositories.Add(Key, repo);
             }
-            return _repositories[Key] as GenericRepository<T>;
+            return _repositories[Key] as IGenericRepository<T>;
         }
     }
 }
