@@ -9,6 +9,9 @@ using StackExchange.Redis;
 using ECommerce.Repository.Identity;
 using ECommerce.Core.Entity.Identity;
 using Microsoft.AspNetCore.Identity;
+using ECommerce.Core.Services.Contract;
+using ECommerce.Services;
+using ECommerce.Core;
 
 namespace E_Commerce.Extentions
 {
@@ -31,7 +34,7 @@ namespace E_Commerce.Extentions
             {
                 options.InvalidModelStateResponseFactory = context =>
                 {
-                    var errors = context.ModelState
+                     var errors = context.ModelState
                         .Where(e => e.Value.Errors.Count > 0)
                         .SelectMany(e => e.Value.Errors)
                         .Select(e => e.ErrorMessage)
@@ -45,7 +48,9 @@ namespace E_Commerce.Extentions
             });
 
             services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<IdentityDataBase>();
-
+            //services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IOrderService),typeof(OrderService));
             return services;
 
 

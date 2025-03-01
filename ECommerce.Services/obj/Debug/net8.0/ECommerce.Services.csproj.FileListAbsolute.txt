@@ -13,3 +13,8 @@ C:\Users\DELL\source\repos\ECommerce.Services\obj\Debug\net8.0\ref\ECommerce.Ser
 C:\Users\DELL\source\repos\ECommerce.Services\bin\Debug\net8.0\ECommerce.Services.runtimeconfig.json
 C:\Users\DELL\source\repos\ECommerce.Services\obj\Debug\net8.0\ECommerce.Services.csproj.AssemblyReference.cache
 C:\Users\DELL\source\repos\ECommerce.Services\obj\Debug\net8.0\ECommerce.Services.genruntimeconfig.cache
+C:\Users\DELL\source\repos\ECommerce.Services\bin\Debug\net8.0\ECommerce.Core.dll
+C:\Users\DELL\source\repos\ECommerce.Services\bin\Debug\net8.0\ECommerce.Repository.dll
+C:\Users\DELL\source\repos\ECommerce.Services\bin\Debug\net8.0\ECommerce.Core.pdb
+C:\Users\DELL\source\repos\ECommerce.Services\bin\Debug\net8.0\ECommerce.Repository.pdb
+C:\Users\DELL\source\repos\ECommerce.Services\obj\Debug\net8.0\ECommerc.156F7C36.Up2Date

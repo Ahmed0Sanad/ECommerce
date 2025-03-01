@@ -14,11 +14,10 @@ namespace ECommerce.Core.Entity.OrderEntitys
             
         }
 
-        public Order(string buyerEmail, DateTimeOffset orderDate, OrderStatus status, DeliveryMethod? deliveryMethod, decimal subtotal)
+        public Order(string buyerEmail, ICollection<OrderItem> orderItems, DeliveryMethod? deliveryMethod, decimal subtotal,Address address)
         {
             BuyerEmail = buyerEmail;
-            OrderDate = orderDate;
-            Status = status;
+            ShippingAddress = address;
             DeliveryMethod = deliveryMethod;
             Subtotal = subtotal;
         }
@@ -29,6 +28,7 @@ namespace ECommerce.Core.Entity.OrderEntitys
         public Address ShippingAddress { get; set; }
 
         public DeliveryMethod? DeliveryMethod { get; set; }
+        public ICollection<OrderItem> Items { get; set; }   = new HashSet<OrderItem>();
         public decimal Subtotal { get; set; }
         public int? PaymentIntentId { get; set; }
         public decimal Total => Subtotal + DeliveryMethod.Cost;

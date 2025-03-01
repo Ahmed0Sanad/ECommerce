@@ -13,12 +13,12 @@ namespace ECommerce.Core.Entity.OrderEntitys
             
         }
 
-        public OrderItem(OrderProduct product, decimal price, int quantity, Order Order)
+        public OrderItem(OrderProduct product, decimal price, int quantity)
         {
             Product = product;
             Price = price;
             Quantity = quantity;
-            this.Order = Order;
+            
         }
 
         public OrderProduct Product { get; set; }
