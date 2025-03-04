@@ -96,9 +96,6 @@ namespace ECommerce.Repository.Data.Migrations
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OrderId1")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -108,8 +105,6 @@ namespace ECommerce.Repository.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
-
-                    b.HasIndex("OrderId1");
 
                     b.ToTable("OrderItems");
                 });
@@ -239,14 +234,10 @@ namespace ECommerce.Repository.Data.Migrations
             modelBuilder.Entity("ECommerce.Core.Entity.OrderEntitys.OrderItem", b =>
                 {
                     b.HasOne("ECommerce.Core.Entity.OrderEntitys.Order", "Order")
-                        .WithMany()
+                        .WithMany("Items")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ECommerce.Core.Entity.OrderEntitys.Order", null)
-                        .WithMany("Items")
-                        .HasForeignKey("OrderId1");
 
                     b.OwnsOne("ECommerce.Core.Entity.OrderEntitys.OrderProduct", "Product", b1 =>
                         {

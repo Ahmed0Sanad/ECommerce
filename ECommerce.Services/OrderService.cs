@@ -4,6 +4,7 @@ using ECommerce.Core.Entity.OrderEntitys;
 using ECommerce.Core.Entity.rides;
 using ECommerce.Core.Repository.Contract;
 using ECommerce.Core.Services.Contract;
+using ECommerce.Core.Specifications.OrderSpecification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,7 +39,7 @@ namespace ECommerce.Services
                 var productRepo = _unitOfWork.GetRepository<Product>();
                 foreach (var item in items)
                 {
-                    var DbProduct = await productRepo.GetAsync(item.Id);
+                    var DbProduct = await productRepo.GetByIdAsync(item.Id);
                     var product = new OrderProduct(item.Id, item.Name, item.PictureUrl);
                     var orderItem = new OrderItem(product, DbProduct.Price, item.Quantity);
                     OrderItems.Add(orderItem);
@@ -48,10 +49,11 @@ namespace ECommerce.Services
             var subtotal = OrderItems.Sum(item => item.Price);
             // get delivery method
             
-            var delivery = await _unitOfWork.GetRepository<DeliveryMethod>().GetAsync(DeliveryMethodId);
+            var delivery = await _unitOfWork.GetRepository<DeliveryMethod>().GetByIdAsync(DeliveryMethodId);
             if (delivery is null) { return null; }
             //add order
             var order = new Order(BuyerEmail, OrderItems, delivery, subtotal, address);
+           
             await _unitOfWork.GetRepository<Order>().AddAsync(order);
             //save db
             var result = await _unitOfWork.CompleteAsync();
@@ -60,6 +62,20 @@ namespace ECommerce.Services
                 return order;
             }
             return null;
+        }
+        public async Task<IEnumerable<Order?>> GetOrdersAsync(string BuyerEmail)
+        {
+            var spec = new OrderSpecification(BuyerEmail);
+            var result = await _unitOfWork.GetRepository<Order>().GetAllSpecAsync(spec);
+            return result;
+
+        }
+        public async Task<Order?> GetOrderByIdAsync(int OrderId, string buyerEmail)
+        {
+            var spec = new  OrderSpecification(buyerEmail, OrderId);
+            var orderRepo = _unitOfWork.GetRepository<Order>();
+            var order = await orderRepo.GetByIdSpecAsync(spec);
+            return order;
         }
     }
 }
