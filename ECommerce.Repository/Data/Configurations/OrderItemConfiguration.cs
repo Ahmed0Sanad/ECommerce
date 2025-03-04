@@ -14,7 +14,8 @@ namespace ECommerce.Repository.Data.Configurations
         public void Configure(EntityTypeBuilder<OrderItem> builder)
         {
             builder.OwnsOne(I => I.Product, p => p.WithOwner());
-            builder.HasOne(i => i.Order).WithMany();
+            builder.HasOne(i => i.Order).WithMany(o=>o.Items).HasForeignKey(o => o.OrderId).OnDelete(DeleteBehavior.Cascade);
+
         }
     }
 }

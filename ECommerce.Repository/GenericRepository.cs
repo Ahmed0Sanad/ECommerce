@@ -46,12 +46,12 @@ namespace ECommerce.Repository
             return await BaseQuary(spec).ToListAsync();
         }
 
-        public async Task<T?> GetAsync(int id)
+        public async Task<T?> GetByIdAsync(int id)
         {
             return await _appDbContext.Set<T>().FindAsync(id);
         }
 
-        public async Task<T> GetSpecAsync(int id, ISpecification<T> spec)
+        public async Task<T?> GetByIdSpecAsync(ISpecification<T> spec)
         {
             return await BaseQuary(spec).FirstOrDefaultAsync();
         }

@@ -41,7 +41,7 @@ namespace E_Commerce.Controllers
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
             var spec = new ProductWithBrandAndCategory(id);
-            var product = await _productRepo.GetSpecAsync(id,spec);
+            var product = await _productRepo.GetByIdSpecAsync(spec);
           
             if (product == null)
             {

@@ -10,10 +10,10 @@ namespace ECommerce.Core.Repository.Contract
 {
     public interface IGenericRepository<T> where T : BaseEntity
     {
-        Task<T>GetSpecAsync(int id ,ISpecification<T> spec);
+        Task<T?>GetByIdSpecAsync(ISpecification<T> spec);
         Task<IEnumerable<T>> GetAllSpecAsync(ISpecification<T> spec);
         Task<int> CountSpecAsync(ISpecification<T> spec);
-        Task<T> GetAsync(int id);
+        Task<T> GetByIdAsync(int id);
         Task<IEnumerable<T>> GetAllAsync();
         Task AddAsync(T entity);
         void Delete(T entity);
