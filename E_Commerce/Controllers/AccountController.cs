@@ -1,6 +1,7 @@
 ﻿using E_Commerce.DTO;
 using E_Commerce.Errors;
 using ECommerce.Core.Entity.Identity;
+using ECommerce.Core.Services.Contract;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -13,23 +14,25 @@ namespace E_Commerce.Controllers
     {
         private readonly UserManager<AppUser> userManager;
         private readonly SignInManager<AppUser> signInManager;
+        private readonly IAuthService _authService;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthService authService)
         {
             this.userManager = userManager;
             this.signInManager = signInManager;
+            this._authService = authService;
         }
         [HttpPost("login")]
         public async Task<ActionResult<UserDto>> Login(LoginDto login)
         {
-            var email = await userManager.FindByEmailAsync(login.Email);
-            if (email == null)
+            var user = await userManager.FindByEmailAsync(login.Email);
+            if (user == null)
             {
                 return Unauthorized(new ApiResponse(401));
             }
-            var pass = await signInManager.CheckPasswordSignInAsync(email, login.Password, false);
+            var pass = await signInManager.CheckPasswordSignInAsync(user, login.Password, false);
             if (pass.Succeeded is false) { return Unauthorized(new ApiResponse(401)); }
-            return Ok(new UserDto() { Email = login.Email, Password = login.Password, Token = "this is token" });
+            return Ok(new UserDto() { Email = login.Email, Password = login.Password, Token = await _authService.GenerateTokenAsync(user, userManager) });
 
         }
         [HttpPost("register")]
@@ -49,7 +52,7 @@ namespace E_Commerce.Controllers
                 return BadRequest(new ApiResponse(401));
 
             }
-            return Ok(new UserDto() { Email = registerDto.Email, Password = registerDto.Password, Token = "this is token" });
+            return Ok(new UserDto() { Email = registerDto.Email, Password = registerDto.Password, Token = await _authService.GenerateTokenAsync(user, userManager) });
 
         }
     }

@@ -10,6 +10,6 @@ namespace ECommerce.Core.Services.Contract
 {
     public interface IAuthService
     {
-        public Task<string> GenerateToke(AppUser appUser, UserManager<AppUser> userManager);
+        public Task<string> GenerateTokenAsync(AppUser appUser, UserManager<AppUser> userManager);
     }
 }

@@ -23,7 +23,7 @@ namespace ECommerce.Services
         }
        
 
-        public async Task<string> GenerateToke(AppUser appUser , UserManager<AppUser> userManager )
+        public async Task<string> GenerateTokenAsync(AppUser appUser , UserManager<AppUser> userManager )
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

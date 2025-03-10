@@ -31,11 +31,14 @@ namespace E_Commerce.Extentions
             #endregion
 
             #region LifeTime
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+         //   services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddSingleton<IBasketRepository, BasketRepository>();
-            //services.AddScoped<IOrderService, OrderService>();
+         
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IOrderService), typeof(OrderService));
+            services .AddScoped<IProductService, ProductService>();
+            // Security
+            services.AddScoped<IAuthService, AuthService>();
             #endregion
 
             //services.AddAutoMapper(typeof(MappingProfile));
