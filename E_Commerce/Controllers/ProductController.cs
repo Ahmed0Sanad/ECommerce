@@ -4,6 +4,7 @@ using E_Commerce.Errors;
 using E_Commerce.Helper;
 using ECommerce.Core.Entity;
 using ECommerce.Core.Repository.Contract;
+using ECommerce.Core.Services.Contract;
 using ECommerce.Core.Specifications;
 using ECommerce.Core.Specifications.ProductSpecifications;
 using Microsoft.AspNetCore.Http;
@@ -15,33 +16,28 @@ namespace E_Commerce.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IGenericRepository<Product> _productRepo;
+        
         private readonly IMapper _mapper;
-        private readonly IGenericRepository<ProductBrand> brandsRepo;
-        private readonly IGenericRepository<ProductCategory> categoryRepo;
 
-        public ProductController(IGenericRepository<Product> ProductRepo,IMapper mapper, IGenericRepository<ProductBrand>brandsRepo, IGenericRepository<ProductCategory>categoryRepo)
+        public readonly IProductService _ProductService;
+
+        public ProductController(IMapper mapper,IProductService productService)
         {
-            _productRepo = ProductRepo;
+            
             _mapper = mapper;
-            this.brandsRepo = brandsRepo;
-            this.categoryRepo = categoryRepo;
+            _ProductService = productService;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> Getall([FromQuery]ProductSpecificationPram pram) 
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> Getall([FromQuery] ProductSpecificationPram pram) 
         {
-            var spec = new ProductWithBrandAndCategory(pram);
-            var result = await _productRepo.GetAllSpecAsync(spec);
-            var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(result);
-            var countspec = new Specification<Product>(spec.criteria);
-            var count = await _productRepo.CountSpecAsync(countspec);
-            return Ok(new Pagination<ProductDTO>(pram.PageSize,pram.index,count,data));
+            var result =await _ProductService.GetProductsAsync(pram);
+            var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(result.Products);
+            return Ok(new Pagination<ProductDTO>(pram.PageSize,pram.index,result.Count,data));
         }
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
-            var spec = new ProductWithBrandAndCategory(id);
-            var product = await _productRepo.GetByIdSpecAsync(spec);
+            var product = await _ProductService.GetProductByIdAsync(id);
           
             if (product == null)
             {
@@ -53,13 +49,13 @@ namespace E_Commerce.Controllers
         [HttpGet("brands")]
         public async Task<ActionResult<IEnumerable<ProductBrand>>> GetBrands()
         {
-            var brands = await brandsRepo.GetAllAsync();
+            var brands = await _ProductService.GetBrandsAsync();
             return Ok(brands);
         }
         [HttpGet("categories")]
         public async Task<ActionResult<IEnumerable<ProductCategory>>> GetCategories()
         {
-            var result = await categoryRepo.GetAllAsync();
+            var result =  await _ProductService.GetCategoriesAsync();
             return Ok(result);
         }
 
