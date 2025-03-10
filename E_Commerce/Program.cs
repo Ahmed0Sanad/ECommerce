@@ -8,6 +8,7 @@ using ECommerce.Repository.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using E_Commerce.Extentions;
+using Microsoft.AspNetCore.Identity;
 
 namespace E_Commerce
 {
@@ -37,6 +38,7 @@ namespace E_Commerce
             app.UseMiddleware<ExceptionMiddleware>();
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 

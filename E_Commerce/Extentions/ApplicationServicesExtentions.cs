@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Identity;
 using ECommerce.Core.Services.Contract;
 using ECommerce.Services;
 using ECommerce.Core;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace E_Commerce.Extentions
 {
@@ -61,8 +64,29 @@ namespace E_Commerce.Extentions
                 };
             });
             //use Identity
-            services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<IdentityDataBase>();
-           
+            services.AddIdentity<AppUser, IdentityRole>().
+                AddEntityFrameworkStores<IdentityDataBase>();
+            services.AddAuthentication(option =>
+            {
+                option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(option =>
+            {
+                option.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = Configuration["JWT:issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["JWT:audience"],
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"])),
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromDays(double.Parse(Configuration["JWT:DurationInDayes"])),
+
+                };
+            }
+                );
+
             return services;
 
 
