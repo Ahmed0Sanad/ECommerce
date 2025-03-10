@@ -28,7 +28,7 @@ namespace E_Commerce.Middlewares
                 await HandleExceptionAsync(context, ex);
             }
         }
-
+        
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             context.Response.ContentType = "application/json";
@@ -37,7 +37,7 @@ namespace E_Commerce.Middlewares
             var response = new
             {
                 Status = context.Response.StatusCode,
-                Message = "An unexpected error occurred. Please try again later."
+                Message = exception.Message
             };
 
             var jsonResponse = JsonSerializer.Serialize(response);

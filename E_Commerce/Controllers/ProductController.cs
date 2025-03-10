@@ -7,6 +7,7 @@ using ECommerce.Core.Repository.Contract;
 using ECommerce.Core.Services.Contract;
 using ECommerce.Core.Specifications;
 using ECommerce.Core.Specifications.ProductSpecifications;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,7 @@ namespace E_Commerce.Controllers
             _ProductService = productService;
         }
         [HttpGet]
+       
         public async Task<ActionResult<IEnumerable<ProductDTO>>> Getall([FromQuery] ProductSpecificationPram pram) 
         {
             var result =await _ProductService.GetProductsAsync(pram);
