@@ -5,8 +5,7 @@ namespace E_Commerce.DTO
     public class OrderDto
     {
        // string BuyerEmail, int DeliveryMethodId, string BasketId, Address address
-        
-        public string BuyerEmail { get; set; }
+       
         [Required]
 
         public int DeliveryMethodId { get; set; }

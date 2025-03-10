@@ -3,14 +3,17 @@ using E_Commerce.DTO;
 using E_Commerce.Errors;
 using ECommerce.Core.Entity.OrderEntitys;
 using ECommerce.Core.Services.Contract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 //using StackExchange.Redis;
 
 namespace E_Commerce.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class OrderController : ControllerBase
     {
         private readonly IOrderService _orderService;
@@ -25,15 +28,17 @@ namespace E_Commerce.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderToReturnDto>> CreateOrder(OrderDto orderDto)
         {
+            var BuyerEmail = User.FindFirstValue(ClaimTypes.Email);
             var address = _mapper.Map<AddressDto, Address>(orderDto.ShippingAddress);
-            var order = await _orderService.CreateOrderAsync(orderDto.BuyerEmail, orderDto.DeliveryMethodId, orderDto.BasketId, address);
+            var order = await _orderService.CreateOrderAsync(BuyerEmail, orderDto.DeliveryMethodId, orderDto.BasketId, address);
             if (order == null) { return BadRequest(new ApiResponse(401)); }
             var orderToRetrun = _mapper.Map<Order,OrderToReturnDto>(order);
             return Ok(orderToRetrun);
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderToReturnDto>>> GetOrdersForUser(string BuyerEmail)
+        public async Task<ActionResult<IEnumerable<OrderToReturnDto>>> GetOrdersForUser()
         {
+            var BuyerEmail = User.FindFirstValue(ClaimTypes.Email);
             var Orders = await _orderService.GetOrdersAsync(BuyerEmail);
             if (Orders is null)
             {
@@ -44,9 +49,11 @@ namespace E_Commerce.Controllers
             return Ok(ordersToRetrun);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<OrderToReturnDto>> GetOrderById(int id , string buyerEmail)
+        public async Task<ActionResult<OrderToReturnDto>> GetOrderById(int id )
         {
-            var order = await _orderService.GetOrderByIdAsync(id, buyerEmail);
+            var BuyerEmail = User.FindFirstValue(ClaimTypes.Email);
+
+            var order = await _orderService.GetOrderByIdAsync(id, BuyerEmail);
             if (order == null) { return BadRequest(new ApiResponse(404)); }
             var orderToRetrun = _mapper.Map<Order, OrderToReturnDto>(order);
 
