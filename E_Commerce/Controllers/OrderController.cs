@@ -5,6 +5,7 @@ using ECommerce.Core.Entity.OrderEntitys;
 using ECommerce.Core.Services.Contract;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+//using StackExchange.Redis;
 
 namespace E_Commerce.Controllers
 {
@@ -22,30 +23,41 @@ namespace E_Commerce.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Order>> CreateOrder(OrderDto orderDto)
+        public async Task<ActionResult<OrderToReturnDto>> CreateOrder(OrderDto orderDto)
         {
             var address = _mapper.Map<AddressDto, Address>(orderDto.ShippingAddress);
             var order = await _orderService.CreateOrderAsync(orderDto.BuyerEmail, orderDto.DeliveryMethodId, orderDto.BasketId, address);
             if (order == null) { return BadRequest(new ApiResponse(401)); }
-            return Ok(order);
+            var orderToRetrun = _mapper.Map<Order,OrderToReturnDto>(order);
+            return Ok(orderToRetrun);
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrdersForUser(string BuyerEmail)
+        public async Task<ActionResult<IEnumerable<OrderToReturnDto>>> GetOrdersForUser(string BuyerEmail)
         {
             var Orders = await _orderService.GetOrdersAsync(BuyerEmail);
             if (Orders is null)
             {
                 return BadRequest(new ApiResponse(404));
             }
-            return Ok(Orders);
+            var ordersToRetrun = _mapper.Map<IEnumerable<Order>, IEnumerable< OrderToReturnDto>>(Orders);
+
+            return Ok(ordersToRetrun);
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<Order>> GetOrderById(int id , string buyerEmail)
+        public async Task<ActionResult<OrderToReturnDto>> GetOrderById(int id , string buyerEmail)
         {
             var order = await _orderService.GetOrderByIdAsync(id, buyerEmail);
             if (order == null) { return BadRequest(new ApiResponse(404)); }
-            return Ok(order);
+            var orderToRetrun = _mapper.Map<Order, OrderToReturnDto>(order);
+
+            return Ok(orderToRetrun);
             
+        }
+        [HttpGet("delivery")]
+        public async Task<ActionResult<IEnumerable<DeliveryMethod>>> GetAllDeliveryMethod()
+        {
+            var reslut = await _orderService.GetDeliveryMethodAsync();
+            return Ok(reslut);
         }
     }
 }

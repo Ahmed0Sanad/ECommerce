@@ -19,17 +19,28 @@ namespace E_Commerce.Extentions
     {
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration Configuration)
         {
+            #region connection Strings
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddDbContext<IdentityDataBase>(options => options.UseSqlServer(Configuration.GetConnectionString("Identity")));
+            // redis
             services.AddSingleton<IConnectionMultiplexer>((ServiceProveder) =>
             {
                 string connectionString = Configuration.GetConnectionString("redis");
                 return ConnectionMultiplexer.Connect(connectionString);
             });
+            #endregion
+
+            #region LifeTime
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddSingleton<IBasketRepository, BasketRepository>();
+            //services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped(typeof(IOrderService), typeof(OrderService));
+            #endregion
+
             //services.AddAutoMapper(typeof(MappingProfile));
             services.AddAutoMapper(M => M.AddProfile(new MappingProfile(Configuration["ApiBaseUrl"])));
+            //Error handle
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.InvalidModelStateResponseFactory = context =>
@@ -46,11 +57,9 @@ namespace E_Commerce.Extentions
                     return new BadRequestObjectResult(errorResponse);
                 };
             });
-
+            //use Identity
             services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<IdentityDataBase>();
-            //services.AddScoped<IOrderService, OrderService>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped(typeof(IOrderService),typeof(OrderService));
+           
             return services;
 
 

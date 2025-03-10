@@ -40,7 +40,7 @@ namespace ECommerce.Services
                 foreach (var item in items)
                 {
                     var DbProduct = await productRepo.GetByIdAsync(item.Id);
-                    var product = new OrderProduct(item.Id, item.Name, item.PictureUrl);
+                    var product = new OrderProduct(item.Id, DbProduct.Name, DbProduct.PictureUrl);
                     var orderItem = new OrderItem(product, DbProduct.Price, item.Quantity);
                     OrderItems.Add(orderItem);
                 }
@@ -76,6 +76,11 @@ namespace ECommerce.Services
             var orderRepo = _unitOfWork.GetRepository<Order>();
             var order = await orderRepo.GetByIdSpecAsync(spec);
             return order;
+        }
+
+        public async Task<IEnumerable< DeliveryMethod>> GetDeliveryMethodAsync()
+        {
+            return await _unitOfWork.GetRepository<DeliveryMethod>().GetAllAsync();
         }
     }
 }
