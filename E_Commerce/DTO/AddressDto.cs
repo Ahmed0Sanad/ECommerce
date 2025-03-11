@@ -4,7 +4,7 @@ namespace E_Commerce.DTO
 {
     public class AddressDto
     {
-
+        public int id { get; set; }
         [Required]
         public string FirstName { get; set; }
         [Required]
