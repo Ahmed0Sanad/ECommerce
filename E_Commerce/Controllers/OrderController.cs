@@ -29,6 +29,7 @@ namespace E_Commerce.Controllers
         public async Task<ActionResult<OrderToReturnDto>> CreateOrder(OrderDto orderDto)
         {
             var BuyerEmail = User.FindFirstValue(ClaimTypes.Email);
+           
             var address = _mapper.Map<AddressDto, Address>(orderDto.ShippingAddress);
             var order = await _orderService.CreateOrderAsync(BuyerEmail, orderDto.DeliveryMethodId, orderDto.BasketId, address);
             if (order == null) { return BadRequest(new ApiResponse(401)); }

@@ -9,7 +9,7 @@ namespace E_Commerce.DTO
         public string Email { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string DisplayName { get; set; }
         public string Token { get; set; }
     }
 }

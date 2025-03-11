@@ -1,10 +1,14 @@
-﻿using E_Commerce.DTO;
+﻿using AutoMapper;
+using E_Commerce.DTO;
 using E_Commerce.Errors;
+using E_Commerce.Extentions;
 using ECommerce.Core.Entity.Identity;
 using ECommerce.Core.Services.Contract;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace E_Commerce.Controllers
 {
@@ -13,14 +17,16 @@ namespace E_Commerce.Controllers
     public class AccountController : ControllerBase
     {
         private readonly UserManager<AppUser> userManager;
-        private readonly SignInManager<AppUser> signInManager;
+        private readonly SignInManager<AppUser> _signInManager;
         private readonly IAuthService _authService;
+        private readonly IMapper _mapper;
 
-        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthService authService)
+        public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IAuthService authService,IMapper mapper)
         {
             this.userManager = userManager;
-            this.signInManager = signInManager;
+            this._signInManager = signInManager;
             this._authService = authService;
+            this._mapper = mapper;
         }
         
         [HttpPost("login")]
@@ -31,9 +37,9 @@ namespace E_Commerce.Controllers
             {
                 return Unauthorized(new ApiResponse(401));
             }
-            var pass = await signInManager.CheckPasswordSignInAsync(user, login.Password, false);
+            var pass = await _signInManager.CheckPasswordSignInAsync(user, login.Password, false);
             if (pass.Succeeded is false) { return Unauthorized(new ApiResponse(401)); }
-            return Ok(new UserDto() { Email = login.Email, Password = login.Password, Token = await _authService.GenerateTokenAsync(user, userManager) });
+            return Ok(new UserDto() { Email = login.Email, DisplayName = user.UserName, Token = await _authService.GenerateTokenAsync(user, userManager) });
 
         }
         [HttpPost("register")]
@@ -53,8 +59,42 @@ namespace E_Commerce.Controllers
                 return BadRequest(new ApiResponse(401));
 
             }
-            return Ok(new UserDto() { Email = registerDto.Email, Password = registerDto.Password, Token = await _authService.GenerateTokenAsync(user, userManager) });
+            return Ok(new UserDto() { Email = registerDto.Email, DisplayName = user.UserName, Token = await _authService.GenerateTokenAsync(user, userManager) });
 
+        }
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetCurrentUser()
+        { 
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var user = await userManager.FindByEmailAsync(email);
+
+            var userDto = new UserDto() { Email = email, DisplayName = user.UserName, Token = await _authService.GenerateTokenAsync(user, userManager) };
+            return Ok(userDto);
+        }
+        [HttpGet("address")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<AddressDto>>> GetUserAddress()
+        {
+            var user = await userManager.FindUserWithAddressAsync(User);
+            return Ok(user.addresses);
+        }
+        [HttpPost("AddAddress")]
+        [Authorize]
+        public async Task<ActionResult<AddressDto>> AddAddressForUSer(AddressDto addressDto) 
+        {
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            var user = await userManager.FindByEmailAsync(userEmail);
+            var address = _mapper.Map<AddressDto,Address>(addressDto);
+            user.addresses.Add(address);
+            var result = await userManager.UpdateAsync(user);
+            if (!result.Succeeded) { return BadRequest(new ApiResponse(400)); }
+            return Ok(addressDto);
+        }
+        [HttpGet("emailexists")]
+        public async Task<ActionResult<bool>> IsEmailExist(string email)
+        {
+            return await userManager.FindByEmailAsync(email) is not null;
         }
     }
 }
