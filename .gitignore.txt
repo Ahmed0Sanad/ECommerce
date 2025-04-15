@@ -5,6 +5,11 @@ appsettings*.json
 !appsettings.Staging.json
 !appsettings.Production.json
 
+# Sensitive configuration files
+appsettings.Secrets.json
+appsettings.Local.json
+appsettings.Private.json
+
 # User-specific files
 *.user
 *.userosscache
