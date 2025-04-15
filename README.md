@@ -111,9 +111,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📧 Contact
 
-Your Name - [your-email@example.com]
+[ahmedsanad880@gmail.com]
 
-Project Link: [https://github.com/yourusername/E_Commerce]
 
 ## 💳 Payment Processing
 
