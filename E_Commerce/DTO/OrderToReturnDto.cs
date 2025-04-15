@@ -13,7 +13,7 @@ namespace E_Commerce.DTO
         public decimal DeliveryMethodCost { get; set; }
         public ICollection<OrderItemDto> Items { get; set; } = new HashSet<OrderItemDto>();
         public decimal Subtotal { get; set; }
-        public int? PaymentIntentId { get; set; }
+        public string PaymentIntentId { get; set; }
 
         public decimal Total => Subtotal + (DeliveryMethodCost);
 

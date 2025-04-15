@@ -36,6 +36,12 @@ namespace E_Commerce
                 app.UseSwaggerUI();
             }
             app.UseMiddleware<ExceptionMiddleware>();
+            app.UseCors(op =>
+            {
+                op.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+            });
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseAuthentication();

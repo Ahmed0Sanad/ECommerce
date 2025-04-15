@@ -9,15 +9,18 @@ namespace ECommerce.Core.Entity.OrderEntitys
 {
     public class Order : BaseEntity
     {
+      
+
         public Order()
         {
             
         }
 
-        public Order(string buyerEmail, ICollection<OrderItem> orderItems, DeliveryMethod? deliveryMethod, decimal subtotal,Address address)
+        public Order(string buyerEmail, ICollection<OrderItem> orderItems, DeliveryMethod? deliveryMethod, decimal subtotal,Address address,string paymentintent)
         {
             BuyerEmail = buyerEmail;
             ShippingAddress = address;
+            PaymentIntentId = paymentintent;
             DeliveryMethod = deliveryMethod;
             Subtotal = subtotal;
             Items = orderItems;
@@ -31,7 +34,7 @@ namespace ECommerce.Core.Entity.OrderEntitys
         public DeliveryMethod? DeliveryMethod { get; set; }
         public ICollection<OrderItem> Items { get; set; }   = new HashSet<OrderItem>();
         public decimal Subtotal { get; set; }
-        public int? PaymentIntentId { get; set; }
+        public string PaymentIntentId { get; set; }
 
         public decimal Total => Subtotal + (DeliveryMethod?.Cost ?? 0);
 

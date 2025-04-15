@@ -17,14 +17,17 @@ namespace ECommerce.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBasketRepository _basketRepository;
+        private readonly IStripeService _stripeService;
 
         public OrderService(
             IUnitOfWork unitOfWork,
-            IBasketRepository basketRepository
+            IBasketRepository basketRepository,
+            IStripeService stripeService
             )
         {
             _unitOfWork = unitOfWork;
             _basketRepository = basketRepository;
+            this._stripeService = stripeService;
         }
         public async Task<Order?> CreateOrderAsync(string BuyerEmail, int DeliveryMethodId, string BasketId, Address address)
         {
@@ -51,8 +54,17 @@ namespace ECommerce.Services
             
             var delivery = await _unitOfWork.GetRepository<DeliveryMethod>().GetByIdAsync(DeliveryMethodId);
             if (delivery is null) { return null; }
+            //paymantintent
+            OrderWithPaymentIntentIdSpecification payemntSpec = new OrderWithPaymentIntentIdSpecification(basket.PaymentIntentId);
+            var orderRepo = _unitOfWork.GetRepository<Order>();
+            var OldOrder =await orderRepo.GetByIdSpecAsync(payemntSpec);
+            if(OldOrder is not null) {
+                 orderRepo.Delete(OldOrder);
+                //_stripeService.CreateOrUpdatePayment(BasketId);
+            }
             //add order
-            var order = new Order(BuyerEmail, OrderItems, delivery, subtotal, address);
+
+            var order = new Order(BuyerEmail, OrderItems, delivery, subtotal, address,basket.PaymentIntentId);
            
             await _unitOfWork.GetRepository<Order>().AddAsync(order);
             //save db

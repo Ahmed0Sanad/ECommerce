@@ -36,7 +36,7 @@ namespace E_Commerce.Extentions
             #region LifeTime
          //   services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddSingleton<IBasketRepository, BasketRepository>();
-         
+             services.AddScoped<IStripeService, StripeService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IOrderService), typeof(OrderService));
             services .AddScoped<IProductService, ProductService>();
@@ -66,6 +66,9 @@ namespace E_Commerce.Extentions
             //use Identity
             services.AddIdentity<AppUser, IdentityRole>().
                 AddEntityFrameworkStores<IdentityDataBase>();
+
+
+            #region jwt
             services.AddAuthentication(option =>
             {
                 option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -85,7 +88,10 @@ namespace E_Commerce.Extentions
 
                 };
             }
-                );
+               );
+            #endregion
+           
+
 
             return services;
 
