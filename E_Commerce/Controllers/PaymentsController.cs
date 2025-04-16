@@ -26,22 +26,23 @@ namespace E_Commerce.Controllers
         /// <summary>
         /// Creates a PaymentIntent and returns the Client Secret.
         /// </summary>
-        [HttpPost("create-payment-intent")]
-        public async Task<ActionResult<string>> CreatePaymentIntent(int orderId)
-        {
-            var order = await _unitOfWork.GetRepository<Order>().GetByIdAsync(orderId);
-            StripeResponseServ stripeResponse = await _stripeService.CreateCheckoutSession(order);
-            switch (stripeResponse.statusCode)
-            {
-                case HttpStatusCode.OK:
-                    return Ok(stripeResponse.Url);
-                case HttpStatusCode.NotFound:
-                    return NotFound(stripeResponse.ErrorMassage);
-                default:
-                    return BadRequest( new ApiResponse(500));
-            }
+        //[HttpPost("create-payment-intent")]
+        //public async Task<ActionResult<string>> CreatePaymentIntent(int orderId)
+        //{
+
+        //    var order = await _unitOfWork.GetRepository<Order>().GetByIdAsync(orderId);
+        //    StripeResponseServ stripeResponse = await _stripeService.CreateCheckoutSession(order);
+        //    switch (stripeResponse.statusCode)
+        //    {
+        //        case HttpStatusCode.OK:
+        //            return Ok(stripeResponse.Url);
+        //        case HttpStatusCode.NotFound:
+        //            return NotFound(stripeResponse.ErrorMassage);
+        //        default:
+        //            return BadRequest( new ApiResponse(500));
+        //    }
            
-        }
+      //  }
 
         /// <summary>
         /// Confirms a PaymentIntent with a PaymentMethod.
@@ -55,7 +56,7 @@ namespace E_Commerce.Controllers
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
             var stripeRsponse= _stripeService.HandleStripeWebhookAsync(json);
 
-            return Ok(stripeRsponse);
+            return Ok();
         }
         [HttpGet("success")]
         public async Task<string> SuccessPage()

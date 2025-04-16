@@ -62,6 +62,7 @@ namespace E_Commerce.Controllers
             
         }
         [HttpGet("delivery")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<DeliveryMethod>>> GetAllDeliveryMethod()
         {
             var reslut = await _orderService.GetDeliveryMethodAsync();

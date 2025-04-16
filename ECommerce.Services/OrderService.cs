@@ -49,7 +49,7 @@ namespace ECommerce.Services
                 }
             }
             //calc subTotal
-            var subtotal = OrderItems.Sum(item => item.Price);
+            var subtotal = OrderItems.Sum(item => item.Price*item.Quantity);
             // get delivery method
             
             var delivery = await _unitOfWork.GetRepository<DeliveryMethod>().GetByIdAsync(DeliveryMethodId);
