@@ -75,7 +75,7 @@ dotnet ef database update
 dotnet run
 ```
 
-The API will be available at `https://localhost:5001` (or the port specified in your configuration)
+The API will be available at `https://localhost:7073`  (or the port specified in your configuration)
 
 ## 🔒 API Security
 
@@ -88,7 +88,7 @@ The API uses JWT Bearer token authentication. Make sure to:
 
 When running in development mode, you can access the Swagger UI at:
 ```
-https://localhost:5001/swagger
+https://localhost:7073/swagger
 ```
 
 For API testing, you can use the provided Postman collection which includes:
@@ -105,13 +105,9 @@ For API testing, you can use the provided Postman collection which includes:
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details
-
 ## 📧 Contact
 
-[ahmedsanad880@gmail.com]
+ahmedsanad880@gmail.com
 
 
 ## 💳 Payment Processing
