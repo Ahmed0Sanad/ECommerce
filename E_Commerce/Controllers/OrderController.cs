@@ -26,15 +26,15 @@ namespace E_Commerce.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<OrderToReturnDto>> CreateOrder(OrderDto orderDto)
+        public async Task<ActionResult<string>> CreateOrder(OrderDto orderDto)
         {
             var BuyerEmail = User.FindFirstValue(ClaimTypes.Email);
            
             var address = _mapper.Map<AddressDto, Address>(orderDto.ShippingAddress);
             var order = await _orderService.CreateOrderAsync(BuyerEmail, orderDto.DeliveryMethodId, orderDto.BasketId, address);
             if (order == null) { return BadRequest(new ApiResponse(401)); }
-            var orderToRetrun = _mapper.Map<Order,OrderToReturnDto>(order);
-            return Ok(orderToRetrun);
+
+            return Ok(order);
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderToReturnDto>>> GetOrdersForUser()

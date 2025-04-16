@@ -10,7 +10,7 @@ namespace ECommerce.Core.Entity.rides
     {
         public string Id { get; set; }
         public List<BasketProduct> Products { get; set; }
-        public string PaymentIntentId { get; set; }
+        
         public decimal ShippingCost { get; set; }
        
         public int? DeliveryMethodId { get; set; }

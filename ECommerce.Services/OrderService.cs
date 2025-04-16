@@ -29,7 +29,7 @@ namespace ECommerce.Services
             _basketRepository = basketRepository;
             this._stripeService = stripeService;
         }
-        public async Task<Order?> CreateOrderAsync(string BuyerEmail, int DeliveryMethodId, string BasketId, Address address)
+        public async Task<string?> CreateOrderAsync(string BuyerEmail, int DeliveryMethodId, string BasketId, Address address)
         {
             //get basket
             CustomerBasket? basket = await _basketRepository.GetCustomerBasket(BasketId);
@@ -54,26 +54,32 @@ namespace ECommerce.Services
             
             var delivery = await _unitOfWork.GetRepository<DeliveryMethod>().GetByIdAsync(DeliveryMethodId);
             if (delivery is null) { return null; }
-            //paymantintent
-            OrderWithPaymentIntentIdSpecification payemntSpec = new OrderWithPaymentIntentIdSpecification(basket.PaymentIntentId);
-            var orderRepo = _unitOfWork.GetRepository<Order>();
-            var OldOrder =await orderRepo.GetByIdSpecAsync(payemntSpec);
-            if(OldOrder is not null) {
-                 orderRepo.Delete(OldOrder);
-                //_stripeService.CreateOrUpdatePayment(BasketId);
-            }
-            //add order
 
-            var order = new Order(BuyerEmail, OrderItems, delivery, subtotal, address,basket.PaymentIntentId);
+
+            var order = new Order(BuyerEmail, OrderItems, delivery, subtotal, address);
            
             await _unitOfWork.GetRepository<Order>().AddAsync(order);
             //save db
             var result = await _unitOfWork.CompleteAsync();
+            //payment
             if (result > 0)
             {
-                return order;
+                var stripeResponse = await _stripeService.CreateCheckoutSession(order as Order);
+                if (stripeResponse.statusCode == System.Net.HttpStatusCode.OK)
+                {
+                    order.Status = OrderStatus.pending;
+                    return stripeResponse.Url ;
+                }
+                else
+                {
+                    return null;
+                }
             }
-            return null;
+            else
+            {
+                return null;
+            }
+
         }
         public async Task<IEnumerable<Order?>> GetOrdersAsync(string BuyerEmail)
         {

@@ -1,4 +1,5 @@
-﻿using ECommerce.Core.Entity.rides;
+﻿using ECommerce.Core.Entity.OrderEntitys;
+using ECommerce.Core.Entity.rides;
 using ECommerce.Core.Helper;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace ECommerce.Core.Services.Contract
 {
     public interface IStripeService
     {
-        public  Task<StripeResponseServ> CreateCheckoutSession(string basketId);
+        public  Task<StripeResponseServ> CreateCheckoutSession(Order order);
+        public Task<int> HandleStripeWebhookAsync(string? json);
     }
 }

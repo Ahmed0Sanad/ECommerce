@@ -1,4 +1,6 @@
 ﻿using E_Commerce.Errors;
+using ECommerce.Core;
+using ECommerce.Core.Entity.OrderEntitys;
 using ECommerce.Core.Helper;
 using ECommerce.Core.Services.Contract;
 using Microsoft.AspNetCore.Authorization;
@@ -13,19 +15,22 @@ namespace E_Commerce.Controllers
     {
        
         private readonly IStripeService _stripeService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PaymentsController(IStripeService stripeService)
+        public PaymentsController(IStripeService stripeService, IUnitOfWork unitOfWork)
         {
             this._stripeService = stripeService;
+            this._unitOfWork = unitOfWork;
         }
 
         /// <summary>
         /// Creates a PaymentIntent and returns the Client Secret.
         /// </summary>
         [HttpPost("create-payment-intent")]
-        public async Task<ActionResult<string>> CreatePaymentIntent(string basketId)
+        public async Task<ActionResult<string>> CreatePaymentIntent(int orderId)
         {
-            StripeResponseServ stripeResponse = await _stripeService.CreateCheckoutSession(basketId);
+            var order = await _unitOfWork.GetRepository<Order>().GetByIdAsync(orderId);
+            StripeResponseServ stripeResponse = await _stripeService.CreateCheckoutSession(order);
             switch (stripeResponse.statusCode)
             {
                 case HttpStatusCode.OK:
@@ -48,10 +53,20 @@ namespace E_Commerce.Controllers
         public async Task<IActionResult> HandleStripeWebhook()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            Console.WriteLine("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaay");
+            var stripeRsponse= _stripeService.HandleStripeWebhookAsync(json);
 
-           
-            return Ok();
+            return Ok(stripeRsponse);
+        }
+        [HttpGet("success")]
+        public async Task<string> SuccessPage()
+        {
+            return ("Order Payment Successed");
+        }
+        [HttpGet("faild")]
+
+        public async Task<string> Faildpage()
+        {
+            return ("Order Payment Faild");
         }
     }
 }
