@@ -40,6 +40,7 @@ namespace E_Commerce.Extentions
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IOrderService), typeof(OrderService));
             services .AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICacheService, CacheService>();
             // Security
             services.AddScoped<IAuthService, AuthService>();
             #endregion

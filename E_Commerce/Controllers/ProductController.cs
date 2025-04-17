@@ -22,13 +22,17 @@ namespace E_Commerce.Controllers
         private readonly IMapper _mapper;
 
         public readonly IProductService _ProductService;
+        public  ICacheService cacheService;
 
-        public ProductController(IMapper mapper,IProductService productService)
+        public ProductController(IMapper mapper,IProductService productService,ICacheService cacheService)
         {
             
             _mapper = mapper;
             _ProductService = productService;
+            this.cacheService = cacheService;
         }
+
+        [CacheAttribute(10)]
         [HttpGet]
        
         public async Task<ActionResult<IEnumerable<ProductDTO>>> Getall([FromQuery] ProductSpecificationPram pram) 
