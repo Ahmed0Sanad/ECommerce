@@ -43,6 +43,7 @@ namespace E_Commerce.Controllers
             return Ok(new UserDto() { Email = login.Email, DisplayName = user.UserName, Token = await _authService.GenerateTokenAsync(user, userManager) });
 
         }
+       
         [HttpPost("register")]
         public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
         {
@@ -57,7 +58,7 @@ namespace E_Commerce.Controllers
             var result = await userManager.CreateAsync(user, registerDto.Password);
             if (result.Succeeded is false)
             {
-                return BadRequest(new ApiResponse(401));
+                return BadRequest(new ApiResponse(404,$"{result.Succeeded.ToString()}"));
 
             }
             return Ok(new UserDto() { Email = registerDto.Email, DisplayName = user.UserName, Token = await _authService.GenerateTokenAsync(user, userManager) });
