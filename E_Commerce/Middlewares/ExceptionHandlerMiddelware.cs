@@ -37,7 +37,7 @@ namespace E_Commerce.Middlewares
             var response = new
             {
                 Status = context.Response.StatusCode,
-                Message = "Server Side Erorr"
+                Message = "Server Side Error",
             };
 
             var jsonResponse = JsonSerializer.Serialize(response);

@@ -2,6 +2,7 @@
 using ECommerce.Core.Entity;
 using ECommerce.Core.Repository.Contract;
 using ECommerce.Repository.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -27,7 +28,10 @@ namespace ECommerce.Repository
           return  await appDbContext.SaveChangesAsync();
         }
 
-       
+        public void Dispose()
+        {
+            appDbContext.Dispose();
+        }
 
         public async ValueTask DisposeAsync()
         {

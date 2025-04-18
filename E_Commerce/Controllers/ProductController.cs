@@ -41,6 +41,7 @@ namespace E_Commerce.Controllers
             var data = _mapper.Map<IEnumerable<Product>, IEnumerable<ProductDTO>>(result.Products);
             return Ok(new Pagination<ProductDTO>(pram.PageSize,pram.index,result.Count,data));
         }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> GetProduct(int id)
         {
@@ -52,13 +53,14 @@ namespace E_Commerce.Controllers
             }
             return Ok(_mapper.Map<Product,ProductDTO>(product));
         }
-
+        [CacheAttribute(10)]
         [HttpGet("brands")]
         public async Task<ActionResult<IEnumerable<ProductBrand>>> GetBrands()
         {
             var brands = await _ProductService.GetBrandsAsync();
             return Ok(brands);
         }
+        [CacheAttribute(10)]
         [HttpGet("categories")]
         public async Task<ActionResult<IEnumerable<ProductCategory>>> GetCategories()
         {

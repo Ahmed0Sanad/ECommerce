@@ -29,51 +29,43 @@ namespace ECommerce.Services
             _basketRepository = basketRepository;
             this._stripeService = stripeService;
         }
-        public async Task<string?> CreateOrderAsync(string BuyerEmail, int DeliveryMethodId, string BasketId, Address address)
+        public async Task<Order?> CreateOrderAsync(string BuyerEmail, int DeliveryMethodId, string BasketId, Address address)
         {
             //get basket
             CustomerBasket? basket = await _basketRepository.GetCustomerBasket(BasketId);
             var OrderItems = new List<OrderItem>();
-            if (basket != null)
+            if (basket is null) { return null; }
+
+            //get items from basket
+            var items = basket.Products;
+            //set all items in orderitem
+            var productRepo = _unitOfWork.GetRepository<Product>();
+            foreach (var item in items)
             {
-                //get items from basket
-                var items = basket.Products;
-                //set all items in orderitem
-                var productRepo = _unitOfWork.GetRepository<Product>();
-                foreach (var item in items)
-                {
-                    var DbProduct = await productRepo.GetByIdAsync(item.Id);
-                    var product = new OrderProduct(item.Id, DbProduct.Name, DbProduct.PictureUrl);
-                    var orderItem = new OrderItem(product, DbProduct.Price, item.Quantity);
-                    OrderItems.Add(orderItem);
-                }
+                var DbProduct = await productRepo.GetByIdAsync(item.Id);
+                var product = new OrderProduct(item.Id, DbProduct.Name, DbProduct.PictureUrl);
+                var orderItem = new OrderItem(product, DbProduct.Price, item.Quantity);
+                OrderItems.Add(orderItem);
             }
+
             //calc subTotal
-            var subtotal = OrderItems.Sum(item => item.Price*item.Quantity);
+            var subtotal = OrderItems.Sum(item => item.Price * item.Quantity);
             // get delivery method
-            
+
             var delivery = await _unitOfWork.GetRepository<DeliveryMethod>().GetByIdAsync(DeliveryMethodId);
             if (delivery is null) { return null; }
 
 
             var order = new Order(BuyerEmail, OrderItems, delivery, subtotal, address);
-           
+
             await _unitOfWork.GetRepository<Order>().AddAsync(order);
             //save db
             var result = await _unitOfWork.CompleteAsync();
             //payment
             if (result > 0)
             {
-                var stripeResponse = await _stripeService.CreateCheckoutSession(order as Order);
-                if (stripeResponse.statusCode == System.Net.HttpStatusCode.OK)
-                {
-                    order.Status = OrderStatus.pending;
-                    return stripeResponse.Url ;
-                }
-                else
-                {
-                    return null;
-                }
+                return order;
+
             }
             else
             {
@@ -90,13 +82,13 @@ namespace ECommerce.Services
         }
         public async Task<Order?> GetOrderByIdAsync(int OrderId, string buyerEmail)
         {
-            var spec = new  OrderSpecification(buyerEmail, OrderId);
+            var spec = new OrderSpecification(buyerEmail, OrderId);
             var orderRepo = _unitOfWork.GetRepository<Order>();
             var order = await orderRepo.GetByIdSpecAsync(spec);
             return order;
         }
 
-        public async Task<IEnumerable< DeliveryMethod>> GetDeliveryMethodAsync()
+        public async Task<IEnumerable<DeliveryMethod>> GetDeliveryMethodAsync()
         {
             return await _unitOfWork.GetRepository<DeliveryMethod>().GetAllAsync();
         }

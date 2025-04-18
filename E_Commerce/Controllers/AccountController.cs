@@ -2,6 +2,7 @@
 using E_Commerce.DTO;
 using E_Commerce.Errors;
 using E_Commerce.Extentions;
+using E_Commerce.Helper;
 using ECommerce.Core.Entity.Identity;
 using ECommerce.Core.Services.Contract;
 using Microsoft.AspNetCore.Authorization;
@@ -62,8 +63,10 @@ namespace E_Commerce.Controllers
             return Ok(new UserDto() { Email = registerDto.Email, DisplayName = user.UserName, Token = await _authService.GenerateTokenAsync(user, userManager) });
 
         }
-        [HttpGet]
+        
         [Authorize]
+        [CacheAttribute(3)]
+        [HttpGet]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         { 
             var email = User.FindFirstValue(ClaimTypes.Email);
@@ -72,8 +75,10 @@ namespace E_Commerce.Controllers
             var userDto = new UserDto() { Email = email, DisplayName = user.UserName, Token = await _authService.GenerateTokenAsync(user, userManager) };
             return Ok(userDto);
         }
-        [HttpGet("address")]
+        
         [Authorize]
+        [CacheAttribute(3)]
+        [HttpGet("address")]
         public async Task<ActionResult<IEnumerable<AddressDto>>> GetUserAddress()
         {
             var user = await userManager.FindUserWithAddressAsync(User);
@@ -91,7 +96,9 @@ namespace E_Commerce.Controllers
             if (!result.Succeeded) { return BadRequest(new ApiResponse(400)); }
             return Ok(addressDto);
         }
+       
         [HttpGet("emailexists")]
+
         public async Task<ActionResult<bool>> IsEmailExist(string email)
         {
             return await userManager.FindByEmailAsync(email) is not null;

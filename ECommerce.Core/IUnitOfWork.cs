@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ECommerce.Core
 {
-    public interface IUnitOfWork : IAsyncDisposable
+    public interface IUnitOfWork : IAsyncDisposable , IDisposable
     {
         public IGenericRepository<T> GetRepository<T>() where T : BaseEntity;
         public Task<int> CompleteAsync();

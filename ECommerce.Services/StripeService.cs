@@ -162,53 +162,7 @@ namespace ECommerce.Services
             
             return new StripeResponseServ() { statusCode=HttpStatusCode.OK,Url=session.Url};
         }
-        public async Task<int> HandleStripeWebhookAsync(string? json)
-        {
-
-            try
-            {
-                // Validate webhook signature
-                var stripeEvent = EventUtility.ParseEvent(json);
-
-                var session = stripeEvent.Data.Object as Session;
-
-                var clientReferenceId = session.ClientReferenceId;
-                var orderId = int.Parse(clientReferenceId);
-                var order = await _unitOfWork.GetRepository<Order>().GetByIdAsync(orderId);
-                order.PaymentIntentId = session.PaymentIntentId;
-                // Handle the event based on its type
-                switch (stripeEvent.Type)
-                {
-                    case EventTypes.CheckoutSessionCompleted:
-
-                        order.Status = OrderStatus.PaymentSuccess;
-                        _logger.LogInformation($"{stripeEvent.Type}");
-
-
-                        break;
-                    case EventTypes.CheckoutSessionExpired:
-                        order.Status = OrderStatus.PaymentFailure;
-                        _logger.LogInformation($"{stripeEvent.Type}");
-                        break;
-
-                    default:
-                        _logger.LogInformation("Unhandled event type: {EventType}", stripeEvent.Type);
-                        break;
-                }
-                _unitOfWork.CompleteAsync();
-                return 200;
-            }
-            catch (StripeException ex)
-            {
-                _logger.LogError(ex, "Error processing Stripe webhook");
-                return 400;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Unexpected error processing webhook");
-                return 500;
-            }
-        }
+      
 
     }
 }

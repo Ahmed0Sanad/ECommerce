@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using E_Commerce.DTO;
 using E_Commerce.Errors;
+using E_Commerce.Helper;
 using ECommerce.Core.Entity.OrderEntitys;
 using ECommerce.Core.Services.Contract;
 using Microsoft.AspNetCore.Authorization;
@@ -28,13 +29,14 @@ namespace E_Commerce.Controllers
         [HttpPost]
         public async Task<ActionResult<string>> CreateOrder(OrderDto orderDto)
         {
+            
             var BuyerEmail = User.FindFirstValue(ClaimTypes.Email);
-           
+            
             var address = _mapper.Map<AddressDto, Address>(orderDto.ShippingAddress);
             var order = await _orderService.CreateOrderAsync(BuyerEmail, orderDto.DeliveryMethodId, orderDto.BasketId, address);
-            if (order == null) { return BadRequest(new ApiResponse(401)); }
-
-            return Ok(order);
+            if (order == null) { return BadRequest(new ApiResponse(404)); }
+            var orderToReturn = _mapper.Map<Order, OrderToReturnDto>(order);
+            return Ok(orderToReturn);
         }
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderToReturnDto>>> GetOrdersForUser()
@@ -61,6 +63,7 @@ namespace E_Commerce.Controllers
             return Ok(orderToRetrun);
             
         }
+        [CacheAttribute(10)]
         [HttpGet("delivery")]
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<DeliveryMethod>>> GetAllDeliveryMethod()

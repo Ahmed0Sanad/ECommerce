@@ -28,19 +28,33 @@ namespace E_Commerce.Extentions
             // redis
             services.AddSingleton<IConnectionMultiplexer>((ServiceProveder) =>
             {
-                string connectionString = Configuration.GetConnectionString("redis");
-                return ConnectionMultiplexer.Connect(connectionString);
+                //string connectionString = Configuration.GetConnectionString("redis");
+                //return ConnectionMultiplexer.Connect(connectionString);
+                return ConnectionMultiplexer.Connect(
+               new ConfigurationOptions
+               {
+                   EndPoints = { { Configuration["Redis:Host"], int.Parse(Configuration["Redis:Port"]) } },
+                   User = Configuration["Redis:UserName"],
+                   Password = Configuration["Redis:Password"]
+               }
+               );
+                
+
+
             });
+
+
             #endregion
 
             #region LifeTime
-         //   services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            //   services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddSingleton<IBasketRepository, BasketRepository>();
-             services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<IStripeService, StripeService>();
+            services.AddScoped<AppDbContext>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IOrderService), typeof(OrderService));
-            services .AddScoped<IProductService, ProductService>();
-            services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddSingleton<ICacheService, CacheService>();
             // Security
             services.AddScoped<IAuthService, AuthService>();
             #endregion
@@ -52,11 +66,11 @@ namespace E_Commerce.Extentions
             {
                 options.InvalidModelStateResponseFactory = context =>
                 {
-                     var errors = context.ModelState
-                        .Where(e => e.Value.Errors.Count > 0)
-                        .SelectMany(e => e.Value.Errors)
-                        .Select(e => e.ErrorMessage)
-                        .ToList();
+                    var errors = context.ModelState
+                       .Where(e => e.Value.Errors.Count > 0)
+                       .SelectMany(e => e.Value.Errors)
+                       .Select(e => e.ErrorMessage)
+                       .ToList();
 
                     var errorResponse = new VaildationErrorResponse(errors);
 
@@ -91,7 +105,7 @@ namespace E_Commerce.Extentions
             }
                );
             #endregion
-           
+
 
 
             return services;

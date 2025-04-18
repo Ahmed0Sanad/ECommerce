@@ -22,8 +22,9 @@ namespace E_Commerce.Helper
                 ForMember(d => d.FName, o => o.MapFrom(o => o.FirstName));
             // orderAddress
             CreateMap<AddressDto, ECommerce.Core.Entity.OrderEntitys.Address>();
-            CreateMap<Order,OrderToReturnDto>().ForMember(d=>d.DeliveryMethod , o =>o.MapFrom(o=>o.DeliveryMethod.ShortName))
-                .ForMember(d=>d.DeliveryMethodCost ,o=>o.MapFrom(o=>o.DeliveryMethod.Cost));
+            CreateMap<Order, OrderToReturnDto>().ForMember(d => d.DeliveryMethod, o => o.MapFrom(o => o.DeliveryMethod.ShortName))
+                .ForMember(d => d.DeliveryMethodCost, o => o.MapFrom(o => o.DeliveryMethod.Cost));
+          
             CreateMap<OrderItem, OrderItemDto>().ForMember(d => d.ProductId, o => o.MapFrom(o => o.Product.Id))
                 .ForMember(d => d.ProductName, o => o.MapFrom(o => o.Product.ProductName)).
                 ForMember(d => d.PictureUrl, o => o.MapFrom(o => $"{URL}/{o.Product.PictureUrl}"));

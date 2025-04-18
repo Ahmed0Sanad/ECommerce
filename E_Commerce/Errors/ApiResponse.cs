@@ -4,7 +4,12 @@
     {
         public int Status { get; set; }
         public string Message { get; set; }
+        public ApiResponse(int code , string massage)
+        {
+            Status = code;
+            Message = massage;
 
+        }
         public ApiResponse(int code)
         {
             Status = code;

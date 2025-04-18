@@ -12,6 +12,5 @@ namespace ECommerce.Core.Services.Contract
     public interface IStripeService
     {
         public  Task<StripeResponseServ> CreateCheckoutSession(Order order);
-        public Task<int> HandleStripeWebhookAsync(string? json);
     }
 }

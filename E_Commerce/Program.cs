@@ -10,12 +10,14 @@ using Microsoft.EntityFrameworkCore;
 using E_Commerce.Extentions;
 using Microsoft.AspNetCore.Identity;
 
+
 namespace E_Commerce
 {
     public class Program
     {
         public static async Task  Main(string[] args)
         {
+          
             var builder = WebApplication.CreateBuilder(args);
 
             #region Configurations
@@ -30,7 +32,7 @@ namespace E_Commerce
             app.DbPreProcess();
 
             #region MiddelWare
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();

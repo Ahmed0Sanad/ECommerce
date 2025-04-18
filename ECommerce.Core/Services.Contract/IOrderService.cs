@@ -9,7 +9,7 @@ namespace ECommerce.Core.Services.Contract
 {
     public interface IOrderService
     {
-        public Task<string?> CreateOrderAsync(string BuyerEmail, int DeliveryMethodId, string BasketId, Address address);
+        public Task<Order?> CreateOrderAsync(string BuyerEmail, int DeliveryMethodId, string BasketId, Address address);
         public  Task<IEnumerable<Order?>> GetOrdersAsync(string BuyerEmail);
         public  Task<Order?> GetOrderByIdAsync(int OrderId, string buyerEmail);
         public Task<IEnumerable<DeliveryMethod>> GetDeliveryMethodAsync();
